@@ -39,6 +39,20 @@ const nextConfig = {
     ],
     // 输出格式优先 avif/webp，减小首屏体积
     formats: ['image/avif', 'image/webp'],
+
+    /**
+     * 本地开发时关掉图片优化器（unoptimized）。
+     *
+     * 为什么：/next/image 的优化请求由 Next 服务端发出去取图，
+     * 不经过 lib/supabase/proxy-fetch 的代理通道，境内直连 supabase.co
+     * 会被重置，所有卡片图都会 500 退化成兜底色块。
+     * 关掉后 <img> 直接指向 Supabase 公开地址，由访客浏览器自己加载
+     * （浏览器走系统代理，没问题）。
+     *
+     * 生产环境（Vercel 等海外平台）不设 SUPABASE_PROXY_URL，
+     * 优化器保持开启，享受 CDN 裁剪压缩。
+     */
+    unoptimized: Boolean((process.env.SUPABASE_PROXY_URL ?? '').trim()),
   },
 };
 

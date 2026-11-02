@@ -1,7 +1,7 @@
 node_modules/
 .next/
+.next-*/
 .next-run*/
-.next-dev/
 .next-build*/
 out/
 build/
@@ -11,3 +11,4 @@ build/
 .env.local
 .env.*.local
 .vercel
+tsconfig.tsbuildinfo

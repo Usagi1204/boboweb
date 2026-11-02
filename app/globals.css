@@ -97,6 +97,19 @@ button {
   outline-offset: 3px;
 }
 
+/* 仅供读屏的文字，视觉上隐藏但仍在可访问树里 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .container {
   width: 100%;
   max-width: var(--maxw);
@@ -396,6 +409,8 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: clamp(28px, 5vw, 72px);
+  /* 「到店须知」条目减少后，卡片不再需要被拉伸到与左栏等高，按内容收紧更干净 */
+  align-items: start;
 }
 
 .about__quote {
@@ -416,42 +431,343 @@ button {
   line-height: 1.9;
 }
 
-.service-list {
-  display: grid;
-  gap: 2px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+/* ---------------- 服务项目（画廊下方） ---------------- */
 
-.service-list li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: baseline;
-  gap: 16px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.service-list li:first-child {
+.services {
   border-top: 1px solid var(--line);
 }
 
-.service-list__idx {
+.svc-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.svc-list__row {
+  display: grid;
+  /* 两列：序号 + 正文。标价后若加回价格列，这里改回 "auto minmax(0, 1fr) auto" */
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: clamp(14px, 3vw, 34px);
+  padding: clamp(18px, 2.4vw, 26px) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.svc-list__idx {
   font-size: 0.72rem;
   letter-spacing: 0.2em;
   color: var(--accent);
 }
 
-.service-list__name {
-  font-family: var(--font-display);
-  font-size: 1.06rem;
+.svc-list__name {
+  font-size: clamp(1.02rem, 1.6vw, 1.16rem);
+  font-weight: 500;
 }
 
-.service-list__note {
-  font-size: 0.8rem;
+.svc-list__note {
+  margin-top: 7px;
+  max-width: 48em;
   color: var(--muted);
-  text-align: right;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+/* ---------------- 关于：到店须知 ---------------- */
+
+.about__facts {
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+}
+
+.about__facts-title {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.about__facts ul {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about__facts li {
+  display: grid;
+  gap: 3px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.about__facts li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.about__facts strong {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---------------- 复制微信号按钮 ---------------- */
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  transition: border-color 0.24s var(--ease), color 0.24s var(--ease),
+    background-color 0.24s var(--ease);
+}
+
+.copy-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent-deep);
+}
+
+.copy-btn--icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.copy-btn--footer {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.copy-btn[data-state='done'] {
+  border-color: #6ea87f;
+  color: #3f7a52;
+}
+
+.copy-btn__icon {
+  display: inline-flex;
+  flex: none;
+}
+
+/* ---------------- 底部预约区块 ---------------- */
+
+.booking {
+  margin-top: clamp(48px, 7vw, 88px);
+  padding-block: clamp(48px, 7vw, 84px);
+  background: var(--ink);
+  color: #f7f1ec;
+}
+
+.booking__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: center;
+}
+
+.eyebrow--invert {
+  color: rgba(247, 241, 236, 0.58);
+}
+
+.eyebrow--invert::before {
+  background: var(--accent);
+}
+
+.booking__title {
+  font-size: clamp(1.85rem, 4vw, 2.85rem);
+}
+
+.booking__lead {
+  margin-top: 14px;
+  max-width: 30em;
+  font-size: clamp(0.98rem, 1.5vw, 1.1rem);
+  line-height: 1.8;
+  color: rgba(247, 241, 236, 0.74);
+}
+
+.booking__card {
+  padding: clamp(22px, 3vw, 30px);
+  border: 1px solid rgba(247, 241, 236, 0.22);
+  border-radius: var(--radius);
+  background: rgba(255, 253, 251, 0.06);
+}
+
+.booking__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(247, 241, 236, 0.5);
+}
+
+.booking__row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.booking__id {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.6vw, 1.68rem);
+  letter-spacing: 0.04em;
+  /* 微信号里 l / 1 / I 容易混，允许整段选中方便手动复制 */
+  user-select: all;
+}
+
+.booking__hint {
+  margin-top: 14px;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: rgba(247, 241, 236, 0.6);
+}
+
+.booking .copy-btn {
+  border-color: rgba(247, 241, 236, 0.3);
+  color: rgba(247, 241, 236, 0.85);
+}
+
+.booking .copy-btn:hover {
+  border-color: var(--accent-soft);
+  color: #fff;
+}
+
+.booking .copy-btn[data-state='done'] {
+  border-color: #7fc79a;
+  color: #9fe0b6;
+}
+
+/* ---------------- 移动端微信浮标 ---------------- */
+
+.wechat-fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.wechat-fab__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 12px 28px -10px rgba(26, 22, 20, 0.55);
+  transition: transform 0.28s var(--ease), background-color 0.28s var(--ease);
+}
+
+.wechat-fab__btn:hover {
+  background: var(--accent-deep);
+  transform: translateY(-2px);
+}
+
+.wechat-fab[data-open='true'] .wechat-fab__btn {
+  background: var(--accent-deep);
+}
+
+.wechat-fab__panel {
+  width: min(76vw, 268px);
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-elev);
+  box-shadow: 0 18px 40px -18px rgba(26, 22, 20, 0.4);
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transform-origin: bottom right;
+  pointer-events: none;
+  transition: opacity 0.24s var(--ease), transform 0.24s var(--ease);
+}
+
+.wechat-fab[data-open='true'] .wechat-fab__panel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.wechat-fab__title {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.wechat-fab__id {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 1.24rem;
+  user-select: all;
+}
+
+.wechat-fab__copy {
+  width: 100%;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.wechat-fab__hint {
+  margin-top: 10px;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.wechat-fab__icon {
+  display: inline-flex;
+}
+
+/* ---------------- 新增区块的响应式 ---------------- */
+
+@media (max-width: 900px) {
+  .booking__inner {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  /* 浮标出现后，页脚底部要留出空间，别把版权行压住 */
+  .site-footer {
+    padding-bottom: 96px;
+  }
+
+  .wechat-fab {
+    display: flex;
+  }
+}
+
+@media (max-width: 560px) {
+  .svc-list__row {
+    gap: 12px;
+  }
+
+  .svc-list__name {
+    font-size: 1rem;
+  }
+
+  .svc-list__note {
+    font-size: 0.84rem;
+  }
 }
 
 /* ---------------- 页脚 ---------------- */
@@ -526,15 +842,6 @@ button {
 
   .hero-cover__media {
     aspect-ratio: 4 / 3;
-  }
-
-  .service-list li {
-    grid-template-columns: auto 1fr;
-  }
-
-  .service-list__note {
-    grid-column: 2;
-    text-align: left;
   }
 }
 

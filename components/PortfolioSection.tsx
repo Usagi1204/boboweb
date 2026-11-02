@@ -51,6 +51,8 @@ export default function PortfolioSection({ artworks }: PortfolioSectionProps) {
     [visible.length],
   );
 
+  const isEmpty = artworks.length === 0;
+
   return (
     <section className={`section ${styles.section}`} id="gallery">
       <div className="container">
@@ -70,14 +72,24 @@ export default function PortfolioSection({ artworks }: PortfolioSectionProps) {
         {/* 一句话自我介绍：衬线体，比正文浅一档 */}
         <p className={styles.tagline}>{ARTIST_INTRO}</p>
 
-        <FilterBar
-          categories={CATEGORIES}
-          counts={counts}
-          active={filter}
-          onChange={handleFilterChange}
-        />
+        {isEmpty ? (
+          /**
+           * 一件作品都没有时不渲染筛选栏：
+           * 6 个标签全是 0，比空画廊本身更让人以为页面出错了。
+           */
+          <p className={styles.empty}>画廊还是空的，整理好作品后会出现在这里。</p>
+        ) : (
+          <>
+            <FilterBar
+              categories={CATEGORIES}
+              counts={counts}
+              active={filter}
+              onChange={handleFilterChange}
+            />
 
-        <MasonryGallery items={visible} onOpen={setActiveIndex} />
+            <MasonryGallery items={visible} onOpen={setActiveIndex} />
+          </>
+        )}
       </div>
 
       {activeIndex !== null && visible[activeIndex] ? (

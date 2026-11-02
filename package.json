@@ -1,21 +1,26 @@
 {
   "name": "bobo-nail-portfolio",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
-    "dev": "node node_modules/next/dist/bin/next dev -p 3000",
-    "dev:fresh": "NEXT_DIST_DIR=.next-dev node node_modules/next/dist/bin/next dev -p 3000",
-    "build": "node node_modules/next/dist/bin/next build",
-    "start": "node node_modules/next/dist/bin/next start -p 3000",
+    "dev": "node scripts/dev.mjs",
+    "build": "NEXT_DIST_DIR=.next-build NEXT_TELEMETRY_DISABLED=1 node node_modules/next/dist/bin/next build",
+    "start": "NEXT_DIST_DIR=.next-build NEXT_TELEMETRY_DISABLED=1 node node_modules/next/dist/bin/next start -p 3000 -H 0.0.0.0",
     "photos:import": "node scripts/import-photos.mjs",
     "photos:report": "node scripts/analyze-photos.mjs",
     "placeholders": "node scripts/generate-placeholders.mjs",
-    "check:ui": "node scripts/ui-check.mjs"
+    "check:ui": "node scripts/ui-check.mjs",
+    "check:booking": "node scripts/booking-check.cjs",
+    "db:migrate": "node scripts/migrate-to-supabase.mjs",
+    "check:admin": "node scripts/admin-check.mjs"
   },
   "dependencies": {
-    "next": "^15.5.4",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "next": "^15.5.28",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "undici": "^8.12.3"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

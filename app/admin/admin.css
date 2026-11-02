@@ -1,0 +1,513 @@
+/* ---------------------------------------------------------------------------
+ * 管理后台样式
+ *
+ * 与前台刻意区分：前台是暖米色 + 衬线体（作品集调性），
+ * 后台是中性的白/灰 + 无衬线（工具调性）。
+ * 所有类名带 admin- 前缀，且只在 /admin 路由下通过 layout 引入，
+ * 不会污染前台。
+ * --------------------------------------------------------------------------- */
+
+.admin-root {
+  --adm-bg: #f6f6f4;
+  --adm-panel: #ffffff;
+  --adm-ink: #1c1c1a;
+  --adm-muted: #6f6f68;
+  --adm-line: #e2e2dd;
+  --adm-accent: #2f5d50;
+  --adm-danger: #a33a2f;
+  --adm-warn: #8a5a12;
+
+  min-height: 100vh;
+  background: var(--adm-bg);
+  color: var(--adm-ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  /* 后台内容窄一些，表单不散在整屏上 */
+  -webkit-font-smoothing: antialiased;
+}
+
+.admin-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px 72px;
+}
+
+/* ---------------- 顶栏 ---------------- */
+
+.admin-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 22px 0 18px;
+  border-bottom: 1px solid var(--adm-line);
+  margin-bottom: 26px;
+}
+
+.admin-bar__left {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-bar__title {
+  margin: 0;
+  font-size: 1.06rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.admin-bar__who {
+  font-size: 0.82rem;
+  color: var(--adm-muted);
+}
+
+.admin-bar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------------- 卡片 ---------------- */
+
+.admin-card {
+  background: var(--adm-panel);
+  border: 1px solid var(--adm-line);
+  border-radius: 10px;
+  padding: 22px;
+  margin-bottom: 22px;
+}
+
+.admin-card__title {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.admin-card__hint {
+  margin: 0 0 18px;
+  color: var(--adm-muted);
+  font-size: 0.82rem;
+}
+
+/* ---------------- 提示条 ---------------- */
+
+.admin-note {
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  border: 1px solid transparent;
+}
+
+.admin-note--warn {
+  background: #fdf6e8;
+  border-color: #f0dfbc;
+  color: var(--adm-warn);
+}
+
+.admin-note--error {
+  background: #fceeec;
+  border-color: #f0cdc7;
+  color: var(--adm-danger);
+}
+
+.admin-note code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 0.94em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ---------------- 表单 ---------------- */
+
+.admin-form {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-field {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--adm-ink);
+}
+
+.admin-label span {
+  color: var(--adm-muted);
+  font-weight: 400;
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--adm-line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--adm-ink);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.admin-input:focus-visible,
+.admin-select:focus-visible,
+.admin-textarea:focus-visible {
+  outline: 2px solid var(--adm-accent);
+  outline-offset: 1px;
+  border-color: var(--adm-accent);
+}
+
+.admin-textarea {
+  min-height: 68px;
+  resize: vertical;
+}
+
+/* 文件选择器：原生控件在不同系统差异大，这里统一成"虚线框 + 说明" */
+.admin-file {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-file__drop {
+  border: 1px dashed var(--adm-line);
+  border-radius: 8px;
+  padding: 18px;
+  text-align: center;
+  color: var(--adm-muted);
+  font-size: 0.84rem;
+  background: #fbfbfa;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.admin-file__drop:hover {
+  border-color: var(--adm-accent);
+  background: #f7faf8;
+}
+
+.admin-file__input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.admin-file__picked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.84rem;
+  color: var(--adm-ink);
+}
+
+.admin-file__thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--adm-line);
+  flex: none;
+}
+
+/* ---------------- 按钮 ---------------- */
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.admin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-btn--primary {
+  background: var(--adm-accent);
+  color: #fff;
+}
+
+.admin-btn--primary:not(:disabled):hover {
+  opacity: 0.88;
+}
+
+.admin-btn--ghost {
+  background: transparent;
+  border-color: var(--adm-line);
+  color: var(--adm-ink);
+}
+
+.admin-btn--ghost:not(:disabled):hover {
+  background: #efefea;
+}
+
+.admin-btn--danger {
+  background: transparent;
+  border-color: #e6c3bd;
+  color: var(--adm-danger);
+}
+
+.admin-btn--danger:not(:disabled):hover {
+  background: #fceeec;
+}
+
+.admin-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-status {
+  font-size: 0.82rem;
+}
+
+.admin-status--ok {
+  color: var(--adm-accent);
+}
+
+.admin-status--err {
+  color: var(--adm-danger);
+}
+
+/* ---------------- 作品列表 ---------------- */
+
+.admin-count {
+  font-size: 0.82rem;
+  color: var(--adm-muted);
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.admin-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-item__thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #eee;
+  position: relative;
+  flex: none;
+}
+
+.admin-item__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.admin-item__body {
+  min-width: 0;
+}
+
+.admin-item__desc {
+  margin: 0 0 3px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  /* 描述可能很长，截两行就够，别把行撑高 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.admin-item__meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--adm-muted);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-item__cat {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: #eef2f0;
+  color: var(--adm-accent);
+  font-size: 0.74rem;
+}
+
+.admin-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--adm-muted);
+  font-size: 0.86rem;
+  border: 1px dashed var(--adm-line);
+  border-radius: 8px;
+}
+
+/* ---------------- 登录页 ---------------- */
+
+.admin-login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.admin-login__card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid var(--adm-line);
+  border-radius: 12px;
+  padding: 30px 28px;
+  box-shadow: 0 12px 32px rgba(28, 28, 26, 0.06);
+}
+
+.admin-login__title {
+  margin: 0 0 4px;
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.admin-login__hint {
+  margin: 0 0 22px;
+  color: var(--adm-muted);
+  font-size: 0.82rem;
+}
+
+.admin-login__foot {
+  margin: 20px 0 0;
+  font-size: 0.78rem;
+  color: var(--adm-muted);
+  text-align: center;
+}
+
+.admin-login__foot a {
+  color: var(--adm-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ---------------- 配置指引页 ---------------- */
+
+.admin-setup {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 20px 80px;
+}
+
+.admin-setup__step {
+  margin: 0 0 10px;
+  padding-left: 26px;
+  position: relative;
+  font-size: 0.88rem;
+  line-height: 1.85;
+}
+
+.admin-setup__step::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--adm-accent);
+  color: #fff;
+  font-size: 0.68rem;
+  display: grid;
+  place-items: center;
+}
+
+.admin-setup__list {
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.admin-code {
+  display: block;
+  background: #1f2422;
+  color: #e6efe9;
+  border-radius: 8px;
+  padding: 13px 15px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.75;
+  overflow-x: auto;
+  white-space: pre;
+  margin-bottom: 16px;
+}
+
+.admin-code code {
+  font: inherit;
+}
+
+/* ---------------- 窄屏 ---------------- */
+
+@media (max-width: 560px) {
+  .admin-wrap {
+    padding: 0 14px 56px;
+  }
+
+  .admin-card {
+    padding: 18px 16px;
+  }
+
+  .admin-item {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .admin-item__thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* 删除按钮换到第二行，避免挤掉描述 */
+  .admin-item__action {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .admin-btn {
+    padding: 8px 14px;
+  }
+}

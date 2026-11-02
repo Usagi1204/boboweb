@@ -120,10 +120,13 @@ export default function Lightbox({ items, index, onClose, onStep }: LightboxProp
               <p className={styles.note}>{item.note}</p>
             </div>
             <dl className={styles.meta}>
-              <div>
-                <dt>主色调</dt>
-                <dd>{item.tone}</dd>
-              </div>
+              {/* 后台新上传的作品没有色调字段，这一项直接不渲染，避免出现空白行 */}
+              {item.tone ? (
+                <div>
+                  <dt>主色调</dt>
+                  <dd>{item.tone}</dd>
+                </div>
+              ) : null}
               <div>
                 <dt>常规耗时</dt>
                 <dd>{item.duration}</dd>

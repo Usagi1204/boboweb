@@ -28,8 +28,13 @@ export type FilterValue = (typeof CATEGORIES)[number];
  */
 export const ARTIST_INTRO = '武汉 · 专注手绘与晕染的独立美甲师';
 
-/** 分类对应的常规服务时长（与 About 里的价目表口径一致） */
-const CATEGORY_MINUTES: Record<Category, string> = {
+/**
+ * 分类对应的常规服务时长（与「服务项目」区块口径一致）
+ *
+ * 导出是因为 Supabase 来的作品也要用它算灯箱里的时长，
+ * 不能让两个数据源各维护一份，否则改一处另一处就漂了。
+ */
+export const CATEGORY_MINUTES: Record<Category, string> = {
   纯色: '60 — 90 分钟',
   法式: '70 — 95 分钟',
   晕染: '90 — 120 分钟',
@@ -80,6 +85,13 @@ export interface Artwork {
   note: string;
   /** 该分类的常规耗时 */
   duration: string;
+  /**
+   * 上传时间（ISO 字符串）
+   *
+   * 本地 artworks.json 里没有这个字段；只有 Supabase 来的作品有。
+   * 前台不展示它，管理后台的列表用它显示「什么时候传的」。
+   */
+  createdAt?: string;
 }
 
 const RAW = (rawData as { items: RawArtwork[] }).items;
