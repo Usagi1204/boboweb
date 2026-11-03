@@ -132,6 +132,16 @@ check(
     (read('components/admin/BookingList.tsx') ?? '').includes('ImageZoom'),
 );
 
+// 快速登录：密码只能活在 .env.local（gitignored），绝不出现在源码里
+check(
+  '快速登录走服务端环境变量（quickLoginAction）',
+  (read('app/admin/actions.ts') ?? '').includes('process.env.ADMIN_QUICK_PASSWORD'),
+);
+check(
+  '登录页按环境变量决定渲染快速登录按钮',
+  (read('app/admin/login/page.tsx') ?? '').includes('process.env.ADMIN_QUICK_PASSWORD'),
+);
+
 
 // 密码绝不能出现在源码里
 const sourceFiles = [

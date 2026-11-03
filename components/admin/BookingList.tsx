@@ -287,25 +287,46 @@ export default function BookingList({ bookings }: { bookings: AdminBooking[] }) 
     return <p className="admin-empty">还没有预约记录。用上面的表单记第一条。</p>;
   }
 
-  // 「即将到来」从今天 0 点算起；更早的收进折叠区
+  // 三组：今天单独突出（最常看的）、之后、更早（折叠）
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const tomorrowStart = todayStart + 24 * 3600 * 1000;
 
-  const upcoming = bookings
-    .filter((b) => new Date(b.starts_at).getTime() >= todayStart)
-    .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime());
-  const past = bookings
-    .filter((b) => new Date(b.starts_at).getTime() < todayStart)
-    .sort((a, b) => new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime());
+  const byStartAsc = (a: AdminBooking, b: AdminBooking) =>
+    new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime();
+  const startsAt = (b: AdminBooking) => new Date(b.starts_at).getTime();
+
+  const today = bookings
+    .filter((b) => {
+      const t = startsAt(b);
+      return t >= todayStart && t < tomorrowStart;
+    })
+    .sort(byStartAsc);
+  const future = bookings.filter((b) => startsAt(b) >= tomorrowStart).sort(byStartAsc);
+  const past = bookings.filter((b) => startsAt(b) < todayStart).sort(byStartAsc);
 
   return (
     <div className="admin-bookings">
-      <p className="admin-subhead">即将到来（{upcoming.length}）</p>
-      {upcoming.length === 0 ? (
-        <p className="admin-card__hint">最近没有预约，可以在朋友圈营业一下。</p>
+      {/* 今天的预约：独立区域 + 强调色，进后台第一眼就能看到 */}
+      <section className="admin-today" aria-label="今天的预约">
+        <p className="admin-subhead admin-subhead--today">今天（{today.length}）</p>
+        {today.length === 0 ? (
+          <p className="admin-card__hint">今天还没有预约。</p>
+        ) : (
+          <ul className="admin-list">
+            {today.map((booking) => (
+              <BookingItem key={booking.id} booking={booking} />
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <p className="admin-subhead">之后（{future.length}）</p>
+      {future.length === 0 ? (
+        <p className="admin-card__hint">之后暂时没有预约，可以在朋友圈营业一下。</p>
       ) : (
         <ul className="admin-list">
-          {upcoming.map((booking) => (
+          {future.map((booking) => (
             <BookingItem key={booking.id} booking={booking} />
           ))}
         </ul>

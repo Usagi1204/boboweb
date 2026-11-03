@@ -12,6 +12,7 @@ import {
   SUPABASE_BUCKET,
   SUPABASE_URL,
   WORKS_TABLE,
+  ADMIN_EMAIL,
 } from '@/lib/supabase/config';
 import { checkAdmin, createServerSupabase } from '@/lib/supabase/server';
 
@@ -487,4 +488,39 @@ export async function deleteBookingAction(id: string): Promise<ActionState> {
   revalidatePath('/');
   revalidatePath('/admin/bookings');
   return { ok: true, message: '预约已删除。' };
+}
+
+// ===========================================================================
+// 快速登录（仅本地开发）
+// ===========================================================================
+
+/**
+ * 一键登录：密码只存在于服务器环境变量 ADMIN_QUICK_PASSWORD 里，
+ * 不进代码仓库、不进浏览器 bundle。
+ *
+ * 安全边界：本地 .env.local 配了这个变量，登录页才会出现「快速登录」按钮；
+ * 线上（Vercel）故意不配 —— 公开站点上一个能绕过密码的按钮
+ * 等于把后台对所有人开放。想在哪儿用就在哪儿的服务器环境配，别提交到仓库。
+ */
+export async function quickLoginAction(): Promise<ActionState> {
+  const password = process.env.ADMIN_QUICK_PASSWORD;
+  if (!password) {
+    return { ok: false, message: '快速登录未启用（服务器没有配置 ADMIN_QUICK_PASSWORD）。' };
+  }
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.auth.signInWithPassword({
+    email: ADMIN_EMAIL,
+    password,
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      message:
+        '快速登录失败：ADMIN_QUICK_PASSWORD 和 Supabase 账号密码不一致，请核对 .env.local。',
+    };
+  }
+
+  return { ok: true, message: '' };
 }

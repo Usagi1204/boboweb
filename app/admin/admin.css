@@ -806,4 +806,18 @@
 .admin-zoom__close:hover {
   background: rgba(255, 255, 255, 0.26);
 }
+/* ---------------- 今日预约高亮 ---------------- */
 
+.admin-today {
+  border: 1.5px solid var(--adm-accent);
+  border-radius: 10px;
+  background: rgba(47, 93, 80, 0.06);
+  padding: 14px 16px 16px;
+  margin-bottom: 22px;
+}
+
+.admin-subhead--today {
+  color: var(--adm-accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+}

@@ -29,7 +29,7 @@ export default async function LoginPage({
         <p className="admin-login__hint">用你自己的邮箱登录，只有站主账号能进入。</p>
 
         {isSupabaseConfigured ? (
-          <LoginForm denied={denied} />
+          <LoginForm denied={denied} quickLogin={Boolean(process.env.ADMIN_QUICK_PASSWORD)} />
         ) : (
           <div className="admin-note admin-note--warn" style={{ marginBottom: 0 }}>
             还没配置 Supabase，登录不可用。按

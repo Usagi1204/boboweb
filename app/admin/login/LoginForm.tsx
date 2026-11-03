@@ -2,11 +2,17 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { quickLoginAction } from '@/app/admin/actions';
 import { getBrowserSupabase } from '@/lib/supabase/client';
 
 interface LoginFormProps {
   /** URL 带了 ?denied=1，说明登录成功但账号不是站主 */
   denied: boolean;
+  /**
+   * 服务端配置了 ADMIN_QUICK_PASSWORD 才为 true（只有本地会配），
+   * 决定是否渲染「快速登录」按钮。密码本身不下发到浏览器。
+   */
+  quickLogin: boolean;
 }
 
 /** Supabase 的英文报错 → 能看懂的中文 */
@@ -28,7 +34,7 @@ function toFriendlyMessage(raw: string): string {
   return raw;
 }
 
-export default function LoginForm({ denied }: LoginFormProps) {
+export default function LoginForm({ denied, quickLogin }: LoginFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +42,7 @@ export default function LoginForm({ denied }: LoginFormProps) {
     denied ? '这个账号没有后台权限，换站主邮箱登录。' : null,
   );
   const [busy, setBusy] = useState(false);
+  const [quickBusy, setQuickBusy] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,6 +74,27 @@ export default function LoginForm({ denied }: LoginFormProps) {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : '登录失败，请重试。');
       setBusy(false);
+    }
+  }
+
+  /** 快速登录：不调浏览器 Supabase，让服务端用环境变量里的密码登录 */
+  async function handleQuickLogin() {
+    if (quickBusy) return;
+    setQuickBusy(true);
+    setError(null);
+    try {
+      const result = await quickLoginAction();
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+      // 同普通登录：refresh 让 middleware 拿到新 cookie
+      router.replace('/admin');
+      router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : '快速登录失败，请重试。');
+    } finally {
+      setQuickBusy(false);
     }
   }
 
@@ -113,9 +141,19 @@ export default function LoginForm({ denied }: LoginFormProps) {
       </div>
 
       <div className="admin-form__actions">
-        <button type="submit" className="admin-btn admin-btn--primary" disabled={busy}>
+        <button type="submit" className="admin-btn admin-btn--primary" disabled={busy || quickBusy}>
           {busy ? '登录中…' : '登录'}
         </button>
+        {quickLogin ? (
+          <button
+            type="button"
+            className="admin-btn admin-btn--ghost"
+            onClick={handleQuickLogin}
+            disabled={busy || quickBusy}
+          >
+            {quickBusy ? '登录中…' : '快速登录（本机）'}
+          </button>
+        ) : null}
       </div>
     </form>
   );
