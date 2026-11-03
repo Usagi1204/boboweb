@@ -17,10 +17,18 @@ export const metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ denied?: string }>;
+  searchParams: Promise<{ denied?: string; key?: string }>;
 }) {
   const params = await searchParams;
   const denied = params.denied === '1';
+
+  /**
+   * 密令链接：只有 URL 带对的 ?key= 才渲染快速登录按钮。
+   * 比较在服务端做，密令本身不会下发给没带对的人。
+   */
+  const expectedKey = process.env.ADMIN_QUICK_KEY ?? '';
+  const quickKey =
+    expectedKey && params.key && params.key === expectedKey ? params.key : null;
 
   return (
     <main className="admin-login">
@@ -29,7 +37,7 @@ export default async function LoginPage({
         <p className="admin-login__hint">用你自己的邮箱登录，只有站主账号能进入。</p>
 
         {isSupabaseConfigured ? (
-          <LoginForm denied={denied} quickLogin={Boolean(process.env.ADMIN_QUICK_PASSWORD)} />
+          <LoginForm denied={denied} quickKey={quickKey} />
         ) : (
           <div className="admin-note admin-note--warn" style={{ marginBottom: 0 }}>
             还没配置 Supabase，登录不可用。按

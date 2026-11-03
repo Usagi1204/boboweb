@@ -1,5 +1,7 @@
 'use server';
 
+import { timingSafeEqual } from 'node:crypto';
+
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { REAL_CATEGORIES, type Category } from '@/data/portfolio';
@@ -502,10 +504,24 @@ export async function deleteBookingAction(id: string): Promise<ActionState> {
  * 线上（Vercel）故意不配 —— 公开站点上一个能绕过密码的按钮
  * 等于把后台对所有人开放。想在哪儿用就在哪儿的服务器环境配，别提交到仓库。
  */
-export async function quickLoginAction(): Promise<ActionState> {
+/** 常量时间比较，防时序侧信道（虽然是个人站，好习惯不嫌多） */
+function secretMatches(input: string, expected: string): boolean {
+  const a = Buffer.from(input);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+export async function quickLoginAction(key: string): Promise<ActionState> {
   const password = process.env.ADMIN_QUICK_PASSWORD;
-  if (!password) {
-    return { ok: false, message: '快速登录未启用（服务器没有配置 ADMIN_QUICK_PASSWORD）。' };
+  const expectedKey = process.env.ADMIN_QUICK_KEY;
+  if (!password || !expectedKey) {
+    return { ok: false, message: '快速登录未启用（服务器缺少 ADMIN_QUICK_PASSWORD / ADMIN_QUICK_KEY）。' };
+  }
+
+  // 密令是公开网址里的唯一凭证，服务端必须再验一次 ——
+  // 不能只靠「按钮没渲染」，任何人都能直接调 server action
+  if (!secretMatches(key ?? '', expectedKey)) {
+    return { ok: false, message: '密令不对。请从保存的书签进入。' };
   }
 
   const supabase = await createServerSupabase();
@@ -518,7 +534,7 @@ export async function quickLoginAction(): Promise<ActionState> {
     return {
       ok: false,
       message:
-        '快速登录失败：ADMIN_QUICK_PASSWORD 和 Supabase 账号密码不一致，请核对 .env.local。',
+        '快速登录失败：ADMIN_QUICK_PASSWORD 和 Supabase 账号密码不一致，请核对服务器环境变量。',
     };
   }
 

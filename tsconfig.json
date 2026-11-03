@@ -38,10 +38,11 @@
     ".next-dev-4/types/**/*.ts",
     ".next-dev-5/types/**/*.ts",
     ".next-dev-6/types/**/*.ts",
+    ".next-dev-7/types/**/*.ts",
     ".next-dev/types/**/*.ts",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    ".next-dev-7/types/**/*.ts"
+    ".next-dev-8/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

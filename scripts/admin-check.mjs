@@ -138,8 +138,13 @@ check(
   (read('app/admin/actions.ts') ?? '').includes('process.env.ADMIN_QUICK_PASSWORD'),
 );
 check(
-  '登录页按环境变量决定渲染快速登录按钮',
-  (read('app/admin/login/page.tsx') ?? '').includes('process.env.ADMIN_QUICK_PASSWORD'),
+  '登录页按 URL 密令决定渲染快速登录按钮',
+  (read('app/admin/login/page.tsx') ?? '').includes('process.env.ADMIN_QUICK_KEY'),
+);
+
+check(
+  '快速登录 action 服务端二次校验密令（防直接调接口）',
+  (read('app/admin/actions.ts') ?? '').includes('ADMIN_QUICK_KEY'),
 );
 
 
