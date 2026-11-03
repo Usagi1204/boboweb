@@ -16,6 +16,8 @@ import styles from './Portfolio.module.css';
 
 interface PortfolioSectionProps {
   artworks: Artwork[];
+  /** 画廊顶部一句自我介绍（后台可改），缺省用 data/portfolio.ts 的出厂值 */
+  artistIntro?: string;
 }
 
 /**
@@ -24,7 +26,7 @@ interface PortfolioSectionProps {
  * 只在这一层持有状态：当前分类 + 灯箱打开的索引。
  * 画廊、筛选栏、灯箱都是纯展示组件，方便单独替换或测试。
  */
-export default function PortfolioSection({ artworks }: PortfolioSectionProps) {
+export default function PortfolioSection({ artworks, artistIntro = ARTIST_INTRO }: PortfolioSectionProps) {
   const [filter, setFilter] = useState<FilterValue>('全部');
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -70,7 +72,7 @@ export default function PortfolioSection({ artworks }: PortfolioSectionProps) {
         </div>
 
         {/* 一句话自我介绍：衬线体，比正文浅一档 */}
-        <p className={styles.tagline}>{ARTIST_INTRO}</p>
+        <p className={styles.tagline}>{artistIntro}</p>
 
         {isEmpty ? (
           /**

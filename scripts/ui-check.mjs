@@ -207,6 +207,27 @@ try {
   );
   record('alt 格式为「美甲作品：分类，描述」', altOk === true);
 
+  /* 1b. Hero 轮播：候选 8 张 + 每 5 秒自动换 */
+  const carousel = await evaluate(`(() => {
+    const slides = [...document.querySelectorAll('.hero-carousel__slide')];
+    return { total: slides.length, active: slides.findIndex(s => s.classList.contains('is-active')) };
+  })()`);
+  record('Hero 轮播渲染候选图', carousel.total === 8, `${carousel.total} 张，当前第 ${carousel.active + 1} 张`);
+
+  let carouselChanged = false;
+  try {
+    await waitFor(
+      `(() => {
+        const slides = [...document.querySelectorAll('.hero-carousel__slide')];
+        return slides.findIndex(s => s.classList.contains('is-active')) !== ${carousel.active};
+      })()`,
+      'Hero 5 秒后自动切换',
+      8000,
+    );
+    carouselChanged = true;
+  } catch {}
+  record('Hero 每 5 秒自动随机切换', carouselChanged);
+
   /* 2. 筛选 */
   await evaluate(clickTabExpr('法式'));
   await waitFor(`${CARD_COUNT} === 4`, '筛选到「法式」应剩 4 张');
@@ -232,6 +253,17 @@ try {
   );
   record('灯箱大图 alt 也是完整描述', /^美甲作品：/.test(lightboxAlt), lightboxAlt);
 
+  const controlZ = await evaluate(`(() => {
+    const dialog = document.querySelector('[role="dialog"][aria-modal="true"]');
+    const close = dialog.querySelector('button[aria-label="关闭大图"]');
+    const next = dialog.querySelector('button[aria-label="下一张"]');
+    return {
+      close: Number(getComputedStyle(close).zIndex) || 0,
+      next: Number(getComputedStyle(next).zIndex) || 0,
+    };
+  })()`);
+  record('关闭键与翻页键层级在图片之上', controlZ.close >= 2 && controlZ.next >= 2, JSON.stringify(controlZ));
+
   /* 4. 键盘翻页 + Esc */
   await evaluate(
     'window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }))',
@@ -239,6 +271,20 @@ try {
   await sleep(400);
   const title2 = await evaluate('document.querySelector(\'[role="dialog"][aria-modal="true"] h3\')?.textContent || ""');
   record('→ 键翻到下一张', title2.length > 0 && title2 !== title1, `${title1} → ${title2}`);
+
+  /* 4b. 触屏左右滑动翻页（移动端主要翻页方式） */
+  const swipeExpr = `(() => {
+    const dialog = document.querySelector('[role="dialog"][aria-modal="true"]');
+    if (!dialog) return false;
+    const mk = (x) => new Touch({ identifier: 1, target: dialog, clientX: x, clientY: 420 });
+    dialog.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [mk(300)], changedTouches: [mk(300)], targetTouches: [mk(300)] }));
+    dialog.dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [], changedTouches: [mk(100)], targetTouches: [] }));
+    return true;
+  })()`;
+  await evaluate(swipeExpr);
+  await sleep(400);
+  const title3 = await evaluate('document.querySelector(\'[role="dialog"][aria-modal="true"] h3\')?.textContent || ""');
+  record('左滑切到下一张', title3.length > 0 && title3 !== title2, `${title2} → ${title3}`);
 
   await evaluate(
     'window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }))',

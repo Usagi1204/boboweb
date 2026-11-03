@@ -18,6 +18,9 @@ export const SUPABASE_ANON_KEY = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '
 /** Storage bucket 名，与 supabase/schema.sql 里创建的要一致 */
 export const SUPABASE_BUCKET = (process.env.NEXT_PUBLIC_SUPABASE_BUCKET ?? '').trim() || 'nail-images';
 
+/** 预约样图的私有桶（schema-v2.sql），只有站主能读写 */
+export const BOOKINGS_BUCKET = 'booking-images';
+
 /**
  * 唯一允许进入后台的邮箱
  *
@@ -29,6 +32,21 @@ export const ADMIN_EMAIL = (process.env.ADMIN_EMAIL ?? 'usagi520x@gmail.com').tr
 
 /** 作品表名 */
 export const WORKS_TABLE = 'nail_works';
+
+/** 前台文案表名（schema-v2.sql） */
+export const CONTENT_TABLE = 'site_content';
+
+/** 服务项目表名（schema-v2.sql） */
+export const SERVICES_TABLE = 'services';
+
+/** 预约表名（schema-v2.sql），仅站主可读写 */
+export const BOOKINGS_TABLE = 'bookings';
+
+/**
+ * 前台「预约时间表」用的视图名（schema-v2.sql）。
+ * 只含 id / starts_at / duration_minutes 三列，备注和样图不会流出。
+ */
+export const BOOKING_SLOTS_VIEW = 'booking_slots';
 
 /** 两个环境变量都齐了才算配置完成 */
 export const isSupabaseConfigured = SUPABASE_URL !== '' && SUPABASE_ANON_KEY !== '';

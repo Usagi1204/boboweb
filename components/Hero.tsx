@@ -1,35 +1,47 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import type { Artwork } from '@/data/portfolio';
 import { STUDIO_FACTS } from '@/data/site';
+import HeroCarousel from './HeroCarousel';
 
 interface HeroProps {
   /**
-   * 封面图（复用作品集数据，换图只改一处）
+   * 轮播候选作品（服务端随机抽取）
    *
-   * 允许为空：后台把作品删光了，首页仍然要能正常打开，
-   * 只是不显示封面图，而不是白屏或报错。
+   * 允许为空数组：后台把作品删光了，首页仍然要能正常打开，
+   * 只是不显示封面区，而不是白屏或报错。
    */
-  cover?: Artwork | null;
+  slides: Artwork[];
   /** 作品总数，用于角标文案 */
   totalCount: number;
+  /** 标题第一行（后台可改） */
+  titleA?: string;
+  /** 标题第二行（高亮，后台可改） */
+  titleB?: string;
+  /** 导语（后台可改） */
+  lead?: string;
+  /** 「服务客人」数字（后台可改） */
+  servedClients?: string;
 }
 
-export default function Hero({ cover, totalCount }: HeroProps) {
+export default function Hero({
+  slides,
+  totalCount,
+  titleA = '指尖上的',
+  titleB = '小画廊',
+  lead = '这里收着我自己做过的款式：从最基础的纯色，到需要一笔一笔画的碎花。按分类点开就能看细节。喜欢哪一款，记下编号加微信告诉我，我按你的甲型重做一遍。',
+  servedClients = STUDIO_FACTS.servedClients,
+}: HeroProps) {
   return (
     <section className="container hero">
       <div className="hero__grid">
         <div>
           <p className="eyebrow">Independent Nail Artist · Wuhan</p>
           <h1 className="hero__title">
-            指尖上的
+            {titleA}
             <br />
-            <em>小画廊</em>
+            <em>{titleB}</em>
           </h1>
-          <p className="hero__lead">
-            这里收着我自己做过的款式：从最基础的纯色，到需要一笔一笔画的碎花。
-            按分类点开就能看细节。喜欢哪一款，记下编号加微信告诉我，我按你的甲型重做一遍。
-          </p>
+          <p className="hero__lead">{lead}</p>
           <div className="hero__actions">
             <Link href="#gallery" className="btn btn--primary">
               浏览作品
@@ -51,7 +63,7 @@ export default function Hero({ cover, totalCount }: HeroProps) {
           <div className="meta-item">
             <dt>服务客人</dt>
             <dd>
-              {STUDIO_FACTS.servedClients}
+              {servedClients}
               <span>+</span>
             </dd>
           </div>
@@ -65,18 +77,9 @@ export default function Hero({ cover, totalCount }: HeroProps) {
         </dl>
       </div>
 
-      {cover ? (
+      {slides.length > 0 ? (
         <figure className="hero-cover">
-          <div className="hero-cover__media">
-            <Image
-              src={cover.imageUrl}
-              alt={cover.alt}
-              fill
-              sizes="(max-width: 1180px) 100vw, 1180px"
-              priority
-              style={{ objectFit: 'cover', objectPosition: 'center 42%' }}
-            />
-          </div>
+          <HeroCarousel slides={slides} />
           <figcaption className="hero-cover__badge">
             <i aria-hidden="true" />
             工作室实拍 · 共收录 {totalCount} 件作品

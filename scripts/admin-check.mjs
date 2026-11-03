@@ -101,6 +101,31 @@ check(
 const bucketInConfig = (siteConfig.match(/'nail-images'/) || [])[0];
 check('bucket 名与 SQL 一致（nail-images）', Boolean(bucketInConfig) && schemaSql.includes("'nail-images'"));
 
+// ---- v2 结构：schema-v2.sql 与代码是否对得上 ----
+const schemaV2 = read('supabase/schema-v2.sql') ?? '';
+const bookingsLib = read('lib/bookings.ts') ?? '';
+const contentLib = read('lib/content.ts') ?? '';
+
+check('存在 schema-v2.sql 升级脚本', schemaV2.length > 1000);
+check(
+  'v2 建了 site_content / services / bookings / booking_slots 四件套',
+  ['site_content', 'services', 'bookings', 'booking_slots'].every((name) => schemaV2.includes(name)),
+);
+check('预约样图桶是私有的', /'booking-images',\s*false/s.test(schemaV2) || /public = false/.test(schemaV2));
+check(
+  'booking_slots 视图只 select 时间字段（不含 note / image_path）',
+  /create or replace view public\.booking_slots[\s\S]*?select id, starts_at, duration_minutes\s*\n?from public\.bookings/.test(schemaV2),
+);
+check(
+  '前台时间表数据来自 booking_slots 视图而不是 bookings 表',
+  bookingsLib.includes("from(BOOKING_SLOTS_VIEW)") && !/getBookingSlots[\s\S]{0,600}from\(BOOKINGS_TABLE\)/.test(bookingsLib),
+);
+check(
+  '文案默认值与数据库 key 有映射（KEY_MAP 导出）',
+  contentLib.includes('export const KEY_MAP'),
+);
+
+
 // 密码绝不能出现在源码里
 const sourceFiles = [
   'lib/supabase/config.ts',
@@ -111,6 +136,15 @@ const sourceFiles = [
   'app/admin/login/LoginForm.tsx',
   'components/admin/UploadForm.tsx',
   'components/admin/WorkList.tsx',
+  'components/admin/BookingForm.tsx',
+  'components/admin/BookingList.tsx',
+  'components/admin/ContentForm.tsx',
+  'components/admin/ServicesEditor.tsx',
+  'components/admin/AdminBar.tsx',
+  'components/admin/booking-image.ts',
+  'lib/content.ts',
+  'lib/services.ts',
+  'lib/bookings.ts',
   'scripts/migrate-to-supabase.mjs',
   'supabase/schema.sql',
 ];
@@ -161,7 +195,7 @@ const adminText = visibleText(admin.body);
 const isRedirectToLogin = [302, 303, 307, 308].includes(admin.status)
   && (admin.location ?? '').includes('/admin/login');
 const isSetupGuide = admin.status === 200 && adminText.includes('还差几步就能用了');
-const isPanel = admin.status === 200 && adminText.includes('作品管理');
+const isPanel = admin.status === 200 && (adminText.includes('管理后台') || adminText.includes('已上传'));
 
 check(
   '/admin 处于三种合法状态之一（跳登录 / 配置指引 / 已登录面板）',
@@ -174,6 +208,15 @@ if (isSetupGuide) {
   const steps = ['SQL Editor', 'schema.sql', 'Authentication', 'NEXT_PUBLIC_SUPABASE_URL'];
   const missing = steps.filter((s) => !adminText.includes(s));
   check('配置指引包含全部关键步骤', missing.length === 0, missing.length ? `缺：${missing.join(', ')}` : '4 步齐全');
+}
+
+// ---- 新增的两个后台分区：必须同样被 middleware 保护 ----
+for (const route of ['/admin/bookings', '/admin/content']) {
+  const res = await get(route);
+  const guarded = [302, 303, 307, 308].includes(res.status)
+    && (res.location ?? '').includes('/admin/login');
+  const rendered = res.status === 200 && (res.body.includes('管理后台') || res.body.includes('新增预约') || res.body.includes('前台文案'));
+  check(`${route} 被守卫或正常渲染`, guarded || rendered, `状态 ${res.status}`);
 }
 
 // ---- /admin/login ----

@@ -12,7 +12,7 @@ import { WECHAT_ID } from '@/data/site';
  *
  * 该浮层位于页面最外层，用 fixed 定位，不参与文档流，所以不会被画廊重排影响。
  */
-export default function WeChatFloat() {
+export default function WeChatFloat({ wechatId = WECHAT_ID }: { wechatId?: string }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -50,10 +50,10 @@ export default function WeChatFloat() {
       >
         <p className="wechat-fab__title">加微信约时间</p>
         <p className="wechat-fab__id" id="wechat-text-fab">
-          {WECHAT_ID}
+          {wechatId}
         </p>
         <CopyButton
-          value={WECHAT_ID}
+          value={wechatId}
           variant="inline"
           textId="wechat-text-fab"
           copiedLabel="已复制，去微信添加"

@@ -12,7 +12,8 @@
     "check:ui": "node scripts/ui-check.mjs",
     "check:booking": "node scripts/booking-check.cjs",
     "db:migrate": "node scripts/migrate-to-supabase.mjs",
-    "check:admin": "node scripts/admin-check.mjs"
+    "check:admin": "node scripts/admin-check.mjs",
+    "check:v2": "node scripts/check-v2.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

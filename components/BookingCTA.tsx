@@ -9,27 +9,43 @@ import { BOOKING_CTA, WECHAT_ID } from '@/data/site';
  *
  * 这里只负责「怎么联系」这一件事。营业时间、接待量、预约提前量属于「到店须知」，
  * 由紧挨着的 About 区块统一说明，此处不再重复一遍。
+ *
+ * 文案与微信号默认取 data/site.ts 的出厂值；page.tsx 会传入后台改过的值。
  */
-export default function BookingCTA() {
+interface BookingCTAProps {
+  wechat?: string;
+  eyebrow?: string;
+  title?: string;
+  lead?: string;
+  hint?: string;
+}
+
+export default function BookingCTA({
+  wechat = WECHAT_ID,
+  eyebrow = BOOKING_CTA.eyebrow,
+  title = BOOKING_CTA.title,
+  lead = BOOKING_CTA.lead,
+  hint = BOOKING_CTA.hint,
+}: BookingCTAProps) {
   return (
     <section className="booking" id="contact">
       <div className="container">
         <div className="booking__inner">
           <div className="booking__copy">
-            <p className="eyebrow eyebrow--invert">{BOOKING_CTA.eyebrow}</p>
-            <h2 className="booking__title">{BOOKING_CTA.title}</h2>
-            <p className="booking__lead">{BOOKING_CTA.lead}</p>
+            <p className="eyebrow eyebrow--invert">{eyebrow}</p>
+            <h2 className="booking__title">{title}</h2>
+            <p className="booking__lead">{lead}</p>
           </div>
 
           <div className="booking__card">
             <p className="booking__label">微信号</p>
             <div className="booking__row">
               <span className="booking__id" id="wechat-text-inline">
-                {WECHAT_ID}
+                {wechat}
               </span>
-              <CopyButton value={WECHAT_ID} variant="inline" />
+              <CopyButton value={wechat} variant="inline" />
             </div>
-            <p className="booking__hint">{BOOKING_CTA.hint}</p>
+            <p className="booking__hint">{hint}</p>
           </div>
         </div>
       </div>

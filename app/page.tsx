@@ -4,8 +4,12 @@ import PortfolioSection from '@/components/PortfolioSection';
 import Services from '@/components/Services';
 import About from '@/components/About';
 import BookingCTA from '@/components/BookingCTA';
+import BookingSchedule from '@/components/BookingSchedule';
 import Footer from '@/components/Footer';
 import WeChatFloat from '@/components/WeChatFloat';
+import { getBookingSlots } from '@/lib/bookings';
+import { getSiteContent } from '@/lib/content';
+import { getServices } from '@/lib/services';
 import { getWorks } from '@/lib/works';
 
 /**
@@ -19,26 +23,60 @@ import { getWorks } from '@/lib/works';
  */
 export const dynamic = 'force-dynamic';
 
-export default async function HomePage() {
-  const { works } = await getWorks();
+/** Hero 轮播候选数：太少重复感强，太多首屏要排队加载 */
+const HERO_SLIDE_COUNT = 8;
 
-  // 封面默认取第 8 张（构图通常更完整）；作品不足时退回第一张，一张都没有则不显示封面
-  const cover = works[7] ?? works[0] ?? null;
+export default async function HomePage() {
+  // 四个数据源互相独立，任何一个失败都有各自的兜底，不会拖垮整页
+  const [{ works }, { content }, { services }, slotsResult] = await Promise.all([
+    getWorks(),
+    getSiteContent(),
+    getServices(),
+    getBookingSlots(),
+  ]);
+
+  // 轮播候选：随机抽 N 张。每次都随机，首页每次打开看到的顺序都不一样
+  const slides = [...works]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, HERO_SLIDE_COUNT);
 
   return (
     <>
-      <Header />
+      <Header showSchedule={slotsResult.available} />
       <main id="top">
-        <Hero cover={cover} totalCount={works.length} />
-        <PortfolioSection artworks={works} />
+        <Hero
+          slides={slides}
+          totalCount={works.length}
+          titleA={content.heroTitleA}
+          titleB={content.heroTitleB}
+          lead={content.heroLead}
+          servedClients={content.servedClients}
+        />
+        <PortfolioSection artworks={works} artistIntro={content.artistIntro} />
         {/* 看完作品接着想知道价格与耗时，所以服务项目紧跟画廊 */}
-        <Services />
-        <About />
-        <BookingCTA />
+        <Services items={services} />
+        <About
+          quoteA={content.aboutQuoteA}
+          quoteB={content.aboutQuoteB}
+          quoteC={content.aboutQuoteC}
+          text1={content.aboutText1}
+          text2={content.aboutText2}
+          hoursNote={content.hoursNote}
+          addressNote={content.addressNote}
+        />
+        {/* 预约时间表：数据源可用才渲染，没跑 schema-v2.sql 时整个区块不出现 */}
+        {slotsResult.available ? <BookingSchedule slots={slotsResult.slots} /> : null}
+        <BookingCTA
+          wechat={content.wechat}
+          eyebrow={content.bookingEyebrow}
+          title={content.bookingTitle}
+          lead={content.bookingLead}
+          hint={content.bookingHint}
+        />
       </main>
       <Footer />
       {/* 移动端专用浮标，桌面端由 CSS 隐藏 */}
-      <WeChatFloat />
+      <WeChatFloat wechatId={content.wechat} />
     </>
   );
 }

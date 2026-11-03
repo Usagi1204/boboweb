@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import AdminBar from '@/components/admin/AdminBar';
 import WorkList from '@/components/admin/WorkList';
 import UploadForm from '@/components/admin/UploadForm';
 import { signOutAction } from './actions';
@@ -143,22 +144,7 @@ export default async function AdminPage() {
 
   return (
     <main className="admin-wrap">
-      <header className="admin-bar">
-        <div className="admin-bar__left">
-          <h1 className="admin-bar__title">作品管理</h1>
-          <span className="admin-bar__who">{guard.email}</span>
-        </div>
-        <div className="admin-bar__right">
-          <Link href="/" className="admin-btn admin-btn--ghost">
-            查看前台
-          </Link>
-          <form action={signOutAction}>
-            <button type="submit" className="admin-btn admin-btn--ghost">
-              退出
-            </button>
-          </form>
-        </div>
-      </header>
+      <AdminBar active="works" email={guard.email} />
 
       {/* 数据源异常要说出来，否则"配好了却看不到新图"没人知道该查哪里 */}
       {error ? (

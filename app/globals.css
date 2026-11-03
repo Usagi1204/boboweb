@@ -859,3 +859,174 @@ button {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------------- Hero 轮播 ---------------- */
+
+/* 候选图叠放：当前图 opacity 1，其余 0，切换走过渡 */
+.hero-carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+
+.hero-carousel__slide.is-active {
+  opacity: 1;
+}
+
+.hero-carousel__dots {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 10px;
+  list-style: none;
+  border-radius: 999px;
+  background: rgba(16, 13, 12, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.hero-carousel__dots li {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.hero-carousel__dots li.is-active {
+  background: #fff;
+  transform: scale(1.25);
+}
+
+/* ---------------- 预约时间表 ---------------- */
+
+.schedule__months {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: clamp(20px, 3vw, 36px);
+}
+
+.cal {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elev);
+  padding: clamp(16px, 2.4vw, 26px);
+}
+
+.cal__label {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  letter-spacing: 0.04em;
+}
+
+.cal__weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-align: center;
+}
+
+.cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cal__cell {
+  min-height: 58px;
+  padding: 5px 5px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cal__cell--blank {
+  background: transparent;
+}
+
+.cal__day {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 周一店休的小标记 */
+.cal__off {
+  font-style: normal;
+  font-size: 0.58rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 4px;
+  line-height: 1.6;
+}
+
+.cal__cell.is-past {
+  opacity: 0.45;
+}
+
+.cal__cell.is-today {
+  outline: 1.5px solid var(--accent);
+  outline-offset: -1.5px;
+}
+
+.cal__cell.is-today .cal__day {
+  color: var(--accent-deep);
+  font-weight: 600;
+}
+
+.cal__chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cal__chip {
+  font-size: 0.6rem;
+  line-height: 1.5;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 服务项目为空时的占位说明 */
+.svc-list__empty {
+  padding: 26px 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 720px) {
+  .cal__cell {
+    min-height: 50px;
+    padding: 4px;
+  }
+
+  .cal__chip {
+    font-size: 0.55rem;
+  }
+}
+

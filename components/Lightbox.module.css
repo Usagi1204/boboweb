@@ -111,6 +111,8 @@
 
 .close {
   position: absolute;
+  /* 必须高于 stage：frame 有实色背景和阴影，不设层级会把按钮压在图片底下 */
+  z-index: 2;
   top: clamp(12px, 2.4vw, 24px);
   right: clamp(12px, 2.4vw, 24px);
   display: grid;
@@ -131,6 +133,8 @@
 
 .arrow {
   position: absolute;
+  /* 同 .close，保证翻页键始终压在图片上面，尤其是移动端窄屏重叠时 */
+  z-index: 2;
   top: 50%;
   display: grid;
   place-items: center;

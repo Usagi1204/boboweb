@@ -511,3 +511,203 @@
     padding: 8px 14px;
   }
 }
+
+/* ---------------- 分区 tab / 今日提醒 ---------------- */
+
+.admin-tabs {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 8px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #ecece7;
+}
+
+.admin-tabs__tab {
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: var(--adm-muted);
+  font-size: 0.82rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.admin-tabs__tab:hover {
+  color: var(--adm-ink);
+}
+
+.admin-tabs__tab.is-active {
+  background: #fff;
+  color: var(--adm-ink);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.admin-note--today {
+  background: #eaf3ef;
+  border-color: #c7ded2;
+  color: #265344;
+}
+
+.admin-note--today a {
+  margin-left: 10px;
+  color: var(--adm-accent);
+  font-weight: 600;
+}
+
+/* ---------------- 表单增强 ---------------- */
+
+.admin-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.admin-fieldset {
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  padding: 16px 18px 20px;
+  display: grid;
+  gap: 14px;
+}
+
+.admin-fieldset__legend {
+  padding: 0 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--adm-accent);
+}
+
+.admin-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-chip {
+  padding: 3px 10px;
+  border: 1px solid var(--adm-line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--adm-muted);
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.admin-chip.is-active {
+  background: var(--adm-accent);
+  border-color: var(--adm-accent);
+  color: #fff;
+}
+
+.admin-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--adm-danger);
+}
+
+/* ---------------- 行内编辑 ---------------- */
+
+.admin-edit {
+  display: grid;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #fafaf8;
+  border: 1px solid var(--adm-line);
+}
+
+.admin-item__action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---------------- 预约列表 ---------------- */
+
+.admin-subhead {
+  margin: 4px 0 12px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--adm-muted);
+}
+
+.admin-details {
+  margin-top: 22px;
+  border-top: 1px solid var(--adm-line);
+  padding-top: 14px;
+}
+
+.admin-details > summary {
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: var(--adm-muted);
+  margin-bottom: 14px;
+}
+
+.admin-item--booking {
+  align-items: start;
+}
+
+.admin-item__thumb--empty {
+  display: grid;
+  place-items: center;
+  background: #f2f2ef;
+  color: var(--adm-muted);
+  font-size: 0.68rem;
+}
+
+/* ---------------- 服务项目编辑 ---------------- */
+
+.admin-list--services {
+  gap: 14px;
+}
+
+.admin-service {
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  background: #fff;
+}
+
+.admin-service--new {
+  margin-top: 16px;
+  background: #fafaf8;
+  border-style: dashed;
+}
+
+.admin-service__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(120px, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 560px) {
+  .admin-bar__left {
+    gap: 8px;
+  }
+
+  .admin-tabs {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .admin-tabs__tab {
+    flex: 1;
+    text-align: center;
+  }
+
+  .admin-service__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
