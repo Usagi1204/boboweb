@@ -125,6 +125,13 @@ check(
   contentLib.includes('export const KEY_MAP'),
 );
 
+check('ImageZoom 放大组件存在', Boolean(read('components/admin/ImageZoom.tsx')));
+check(
+  '作品与预约列表都接了点击放大',
+  (read('components/admin/WorkList.tsx') ?? '').includes('ImageZoom') &&
+    (read('components/admin/BookingList.tsx') ?? '').includes('ImageZoom'),
+);
+
 
 // 密码绝不能出现在源码里
 const sourceFiles = [
@@ -142,6 +149,7 @@ const sourceFiles = [
   'components/admin/ServicesEditor.tsx',
   'components/admin/AdminBar.tsx',
   'components/admin/booking-image.ts',
+  'components/admin/ImageZoom.tsx',
   'lib/content.ts',
   'lib/services.ts',
   'lib/bookings.ts',

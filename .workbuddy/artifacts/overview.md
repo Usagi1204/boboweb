@@ -1,36 +1,44 @@
-# Supabase 链路打通 · 完成报告（2026-11-03）
+# v2 交付总览：逻辑优化 + 预约业务（todo ruhYsM）
 
-> 上一份报告（替换真实作品照片）已完成归档，本文件更新为管理后台联调收尾。
+## 已完成（代码已全部上线）
 
-## 结果
+已 push 到 GitHub main（`ab62b53`），Vercel 会自动部署到 bobonail.cc。
+所有新功能在「还没跑数据库脚本」时都会安静降级，线上不会出现白屏或报错。
 
-23/23 作品已迁移至 Supabase（`nail_works` 表 + `nail-images` 存储桶），前台、图片、后台自检全部通过：
+### 逻辑优化
 
-| 验证项 | 结果 |
-| --- | --- |
-| 迁移上传 + 写库 | 23/23 成功，库内复核 23 条 |
-| 前台读 Supabase | ✅ 卡片 src 已指向 Storage 公开地址 |
-| 图片可达 | ✅ 200 image/jpeg（经代理） |
-| check:admin 端到端 | 16/16 通过 |
-| tsc --noEmit | 通过 |
+1. **文案后台化**：`site_content` 表 + 后台「文案与服务」页，可改首页标题/导语、关于、微信号、营业说明、预约区块、数字。清空某栏 = 恢复出厂文案。
+2. **服务项目后台化**：`services` 表 + 增删改查 + 排序号。
+3. **作品分类/描述可改**：作品列表每行新增「编辑」，行内改分类与描述。
+4. **灯箱移动端**：翻页/关闭键 `z-index: 2` 永远压在图片上；新增左右滑动翻页（竖滑不误触）。
+5. **Hero 轮播**：随机抽 8 张作品，每 5 秒随机换图，0.9s 交叉淡入淡出 + 圆点指示。
 
-## 过程中解决的问题（按顺序）
+### 新业务：预约
 
-1. **`*.supabase.co` 被墙**：代理规则表缺 `DOMAIN-SUFFIX,supabase.co` → 用户已加规则
-2. **代理端口漂移**：客户端 HTTP 端口 56840→6478，项目改为从 `.env.local` 读 `SUPABASE_PROXY_URL`
-3. **Node 22 代理支持无效**：`NODE_USE_ENV_PROXY` 实测不工作 → 引入 undici `fetch` + `ProxyAgent`，新建 `lib/supabase/proxy-fetch.ts`，接入 server.ts / middleware / 迁移脚本
-4. **middleware 切 Node runtime**（edge 跑不了 undici），并给 `getUser()` 加网络异常兜底
-5. **上传 MIME 丢失**：storage-js 把 Blob 包进 FormData，经代理序列化 content-type 变 text/plain 被拒 → 改传 Uint8Array
-6. **图片优化器 500**：`/next/image` 服务端取图不走代理 → 设 `SUPABASE_PROXY_URL` 时自动 `images.unoptimized`
+- **前台「预约时间表」**（顶栏新增入口）：当月月历；月底（剩 ≤7 天）或下月已有预约时自动加挂下月。周一标「休」，今天高亮，过去置灰。只显示时间段。
+- **后台「预约」页**：增删改查；每条可带顾客样图（可替换/移除）；进入后台任何页面时，若有「今天且未结束」的预约，顶栏提醒。
+- **隐私红线**：前台时间来自 `booking_slots` 视图（只有时间列）；`bookings` 本体对匿名用户 RLS 拒绝；样图在私有桶 `booking-images`，后台用 1 小时签名 URL；超过 7 天的历史样图不再加载（显示「归档」）。
 
-## 改动文件
+## 唯一需要手动做的一步
 
-- 新增 `lib/supabase/proxy-fetch.ts`
-- 修改 `lib/supabase/server.ts`、`middleware.ts`、`next.config.js`、`scripts/migrate-to-supabase.mjs`、`README.md`（新增排障文档）、`.env.local`（追加 SUPABASE_PROXY_URL）
+**Supabase 控制台 → SQL Editor → 把 `supabase/schema-v2.sql` 全文粘贴 → Run。**
+（无法代劳：DDL 需要数据库级权限，项目里只有 anon key。）
 
-## 待办 / 提醒
+跑完后验证：
 
-- [ ] `.env.local` 里的 `SUPABASE_MIGRATE_PASSWORD` 建议删除（迁移已完成）
-- [ ] 用户在浏览器实际登录 `/admin` 验收
-- [ ] 局域网无代理设备看图会退化成色块（网络环境限制，非 bug，README 已说明）
-- [ ] 部署 Vercel 时**不要**带 `SUPABASE_PROXY_URL` 和 `SUPABASE_MIGRATE_*`
+```bash
+npm run check:v2   # 应 7/7 通过，含「anon 读不到 bookings 本体」的隐私红线
+```
+
+## 验证结果（本机全绿）
+
+- `tsc --noEmit` 通过；生产构建通过（optimizer 开启，模拟 Vercel）
+- `check:admin` 24/24（含两个新路由的守卫 + v2 静态一致性）
+- `check:booking` 40/40；`check:ui` 16/16（新增：轮播 5 秒切换、滑动翻页、控件层级）
+
+## 自己加的发挥
+
+- 周一「休」标记、轮播圆点、时长快捷按钮（1h/1.5h/2h/2.5h/3h）
+- 空状态文案（0 项目 → 「项目整理中」；0 预约 → 提示营业）
+- 换图时服务端自动清理被替换的旧样图，不留孤儿文件
+- 预约备注明确「只有你能看到」，客人信息不进系统（符合实际：客人都在微信里）

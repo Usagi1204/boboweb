@@ -711,3 +711,99 @@
   }
 }
 
+/* ---------------- 图片点击放大 ---------------- */
+
+/* 缩略图触发器：透明按钮，不破坏原有 64×64 布局 */
+.admin-zoom__trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.admin-zoom__trigger img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 全屏遮罩 */
+.admin-zoom {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(16, 13, 12, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+/* 图区：默认适应窗口；is-detail 时原图尺寸 + 可滚动看细节 */
+.admin-zoom__stage {
+  max-width: 92vw;
+  max-height: 86vh;
+  overflow: auto;
+  border-radius: 8px;
+  cursor: default;
+  /* 细节模式下拖滚动条的手感 */
+  scrollbar-width: thin;
+}
+
+.admin-zoom__img {
+  display: block;
+  max-width: 92vw;
+  max-height: 86vh;
+  object-fit: contain;
+  border-radius: 8px;
+  cursor: zoom-in;
+  /* 禁止长按保存弹窗干扰（iOS），想看细节用点击切换 */
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.admin-zoom__stage.is-detail .admin-zoom__img {
+  max-width: none;
+  max-height: none;
+  /* 原图尺寸，超出容器后靠 stage 滚动 */
+  cursor: zoom-out;
+}
+
+.admin-zoom__hint {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.74rem;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.admin-zoom__close {
+  position: fixed;
+  top: 16px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-zoom__close:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+

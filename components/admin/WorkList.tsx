@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useActionState, useState } from 'react';
 import { deleteWorkAction, updateWorkAction, type ActionState } from '@/app/admin/actions';
 import { REAL_CATEGORIES, type Artwork, type Category } from '@/data/portfolio';
+import ImageZoom from './ImageZoom';
 
 /**
  * 删除按钮
@@ -153,7 +154,10 @@ function WorkItem({ item }: { item: Artwork }) {
           列表缩略图固定 64×64，用 next/image 让它按这个尺寸取图，
           而不是把 1600px 的原图整张拉下来
         */}
-        <Image src={item.imageUrl} alt={item.alt} width={64} height={64} />
+        {/* 单击放大看全图/细节 */}
+        <ImageZoom src={item.imageUrl} alt={item.alt}>
+          <Image src={item.imageUrl} alt={item.alt} width={64} height={64} />
+        </ImageZoom>
       </div>
 
       <div className="admin-item__body">

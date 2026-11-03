@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { deleteBookingAction, updateBookingAction } from '@/app/admin/actions';
 import type { AdminBooking } from '@/lib/bookings';
 import { removeBookingImageFile, uploadBookingImage } from './booking-image';
+import ImageZoom from './ImageZoom';
 
 /**
  * 预约列表（后台）
@@ -227,7 +228,10 @@ function BookingItem({ booking }: { booking: AdminBooking }) {
         <div className="admin-item__thumb">
           {/* 签名 URL 是临时的且域名动态，用原生 img 加载 */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={booking.signedImageUrl} alt="顾客样图" />
+          {/* 单击放大：适应窗口 → 再点图片看原图细节 */}
+          <ImageZoom src={booking.signedImageUrl} alt="顾客样图">
+            <img src={booking.signedImageUrl} alt="顾客样图" />
+          </ImageZoom>
         </div>
       ) : (
         <div className="admin-item__thumb admin-item__thumb--empty" aria-hidden="true">
