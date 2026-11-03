@@ -6,6 +6,7 @@ import UploadForm from '@/components/admin/UploadForm';
 import { signOutAction } from './actions';
 import { ADMIN_EMAIL, isSupabaseConfigured, SUPABASE_BUCKET, WORKS_TABLE } from '@/lib/supabase/config';
 import { checkAdmin } from '@/lib/supabase/server';
+import { getTodayOpenCount } from '@/lib/bookings';
 import { getWorks } from '@/lib/works';
 
 /**
@@ -140,11 +141,13 @@ export default async function AdminPage() {
     );
   }
 
+  // 先点火再 await：计数与作品查询并行，页面少等一个来回
+  const todayCount = getTodayOpenCount();
   const { works, source, error } = await getWorks();
 
   return (
     <main className="admin-wrap">
-      <AdminBar active="works" email={guard.email} />
+      <AdminBar active="works" email={guard.email} todayCount={todayCount} />
 
       {/* 数据源异常要说出来，否则"配好了却看不到新图"没人知道该查哪里 */}
       {error ? (

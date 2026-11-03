@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import type { Artwork } from '@/data/portfolio';
@@ -128,6 +129,30 @@ export default function Lightbox({ items, index, onClose, onStep }: LightboxProp
           />
         </svg>
       </button>
+
+      {/*
+        预取前后各一张：翻页时图已在缓存里，不会每次都等网络。
+        容器只有 1px 且不可见，但 sizes 与正式大图一致，
+        浏览器按同一档宽度下载，正好命中灯箱要用的缓存。
+      */}
+      <div className={styles.preload} aria-hidden="true">
+        {items.length > 1
+          ? [
+              items[(index + 1) % items.length],
+              items[(index - 1 + items.length) % items.length],
+            ]
+              .filter((neighbor, i, arr) => arr.findIndex((x) => x.id === neighbor.id) === i)
+              .map((neighbor) => (
+                <Image
+                  key={neighbor.id}
+                  src={neighbor.imageUrl}
+                  alt=""
+                  fill
+                  sizes="(max-width: 720px) 94vw, (max-width: 1180px) 92vw, 1040px"
+                />
+              ))
+          : null}
+      </div>
 
       <div className={styles.stage}>
         <figure className={styles.figure}>

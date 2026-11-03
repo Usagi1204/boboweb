@@ -205,3 +205,15 @@
     gap: 20px;
   }
 }
+
+/* 相邻图预取层：不参与布局、不可见、不拦截点击 */
+.preload {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}

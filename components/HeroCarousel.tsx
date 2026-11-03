@@ -23,6 +23,18 @@ interface HeroCarouselProps {
  */
 export default function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarouselProps) {
   const [current, setCurrent] = useState(0);
+  /**
+   * 首屏只挂前两张（当前 + 备选），其余等 1.2 秒后补齐。
+   * 8 张大图同时解码是移动端首屏卡顿的主因；补齐在第一次切换（5 秒）之前完成，
+   * 所以视觉上无缝，只是不跟首屏抢带宽和主线程。
+   */
+  const [mountedCount, setMountedCount] = useState(Math.min(2, slides.length));
+
+  useEffect(() => {
+    if (mountedCount >= slides.length) return undefined;
+    const timer = window.setTimeout(() => setMountedCount(slides.length), 1200);
+    return () => window.clearTimeout(timer);
+  }, [mountedCount, slides.length]);
 
   useEffect(() => {
     if (slides.length < 2) return undefined;
@@ -50,7 +62,7 @@ export default function HeroCarousel({ slides, intervalMs = 5000 }: HeroCarousel
 
   return (
     <div className="hero-cover__media hero-carousel">
-      {slides.map((item, index) => (
+      {slides.slice(0, mountedCount).map((item, index) => (
         <div
           key={item.id}
           className={`hero-carousel__slide${index === current ? ' is-active' : ''}`}

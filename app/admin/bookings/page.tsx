@@ -28,7 +28,8 @@ export default async function AdminBookingsPage() {
 
   return (
     <main className="admin-wrap">
-      <AdminBar active="bookings" email={guard.email} />
+      {/* getAdminBookings 已经算好了今日未完数，不用再查一次 */}
+      <AdminBar active="bookings" email={guard.email} todayCount={result.todayOpenCount} />
 
       {!result.available ? (
         <div className="admin-note admin-note--warn">

@@ -86,7 +86,13 @@ export default function ImageZoom({
           </div>
 
           <p className="admin-zoom__hint" aria-hidden="true">
-            {detail ? '滚动查看细节 · 点图片收回 · Esc 关闭' : '点图片放大看细节 · Esc 关闭'}
+            {/* 桌面提示键盘操作；触屏设备由 CSS 换成不带 Esc 的文案 */}
+            <span className="admin-zoom__hint--pointer">
+              {detail ? '滚动查看细节 · 点图片收回 · Esc 关闭' : '点图片放大看细节 · Esc 关闭'}
+            </span>
+            <span className="admin-zoom__hint--touch">
+              {detail ? '点图片收回 · 点空白处关闭' : '轻点图片看原图细节 · 点空白处关闭'}
+            </span>
           </p>
 
           <button

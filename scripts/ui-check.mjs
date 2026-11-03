@@ -212,7 +212,19 @@ try {
     const slides = [...document.querySelectorAll('.hero-carousel__slide')];
     return { total: slides.length, active: slides.findIndex(s => s.classList.contains('is-active')) };
   })()`);
-  record('Hero 轮播渲染候选图', carousel.total === 8, `${carousel.total} 张，当前第 ${carousel.active + 1} 张`);
+  // 分批挂载：首屏只挂 2 张避免抢带宽，空闲后补齐到 8 张
+  record('Hero 首屏只挂前 2 张（避免首屏抢带宽）', carousel.total >= 1 && carousel.total <= 3, `${carousel.total} 张`);
+
+  let carouselFull = false;
+  try {
+    await waitFor(
+      `document.querySelectorAll('.hero-carousel__slide').length === 8`,
+      'Hero 空闲后补齐 8 张',
+      6000,
+    );
+    carouselFull = true;
+  } catch {}
+  record('Hero 空闲后补齐全部候选图', carouselFull);
 
   let carouselChanged = false;
   try {
@@ -249,7 +261,8 @@ try {
   record('灯箱元信息含常规耗时', /耗时/.test(metaLabels), metaLabels);
 
   const lightboxAlt = await evaluate(
-    'document.querySelector(\'[role="dialog"][aria-modal="true"] img\')?.getAttribute("alt") || ""',
+    // 取 figure 里的正式大图；预取层（.preload）里的图 alt 为空，不能算数
+    'document.querySelector(\'[role="dialog"][aria-modal="true"] figure img\')?.getAttribute("alt") || ""',
   );
   record('灯箱大图 alt 也是完整描述', /^美甲作品：/.test(lightboxAlt), lightboxAlt);
 

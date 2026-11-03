@@ -821,3 +821,82 @@
   font-size: 0.95rem;
   font-weight: 700;
 }
+
+/* 提示文案按设备切换：触屏不谈 Esc */
+.admin-zoom__hint--touch {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .admin-zoom__hint--pointer {
+    display: none;
+  }
+
+  .admin-zoom__hint--touch {
+    display: inline;
+  }
+}
+
+/* ---------------- 加载骨架 ---------------- */
+
+.admin-skeleton {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-skeleton__row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid var(--adm-line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-skeleton__thumb {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  background: #f0f0ec;
+  animation: admin-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.admin-skeleton__lines {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+}
+
+.admin-skeleton__line {
+  height: 12px;
+  border-radius: 4px;
+  background: #f0f0ec;
+  animation: admin-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.admin-skeleton__line--short {
+  width: 42%;
+}
+
+.admin-skeleton__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes admin-skeleton-pulse {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-skeleton__thumb,
+  .admin-skeleton__line {
+    animation: none;
+  }
+}

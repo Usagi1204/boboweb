@@ -872,6 +872,8 @@ button {
 
 .hero-carousel__slide.is-active {
   opacity: 1;
+  /* 只让正在显示的那张独立成层，8 张全开会白占显存、移动端更容易掉帧 */
+  will-change: opacity;
 }
 
 .hero-carousel__dots {

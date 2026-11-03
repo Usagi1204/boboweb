@@ -20,8 +20,23 @@ const TABS = [
 
 export type AdminTabKey = (typeof TABS)[number]['key'];
 
-export default async function AdminBar({ active, email }: { active: AdminTabKey; email: string }) {
-  const todayOpenCount = await getTodayOpenCount();
+export default async function AdminBar({
+  active,
+  email,
+  todayCount,
+}: {
+  active: AdminTabKey;
+  email: string;
+  /**
+   * 今日未完成预约数。
+   * 由页面在拉自己数据的同时并行传进来（传 Promise 也行），
+   * 避免「页面数据 → 再查一次计数」这种串行等待。
+   * 不传就自己查（兼容旧调用）。
+   */
+  todayCount?: number | Promise<number>;
+}) {
+  const todayOpenCount =
+    typeof todayCount === 'number' ? todayCount : await (todayCount ?? getTodayOpenCount());
 
   return (
     <>

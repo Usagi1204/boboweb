@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { deleteBookingAction, updateBookingAction } from '@/app/admin/actions';
 import type { AdminBooking } from '@/lib/bookings';
 import { removeBookingImageFile, uploadBookingImage } from './booking-image';
+import { toMediaUrl } from '@/lib/media';
 import ImageZoom from './ImageZoom';
 
 /**
@@ -205,6 +206,8 @@ function EditBooking({ booking, onDone }: { booking: AdminBooking; onDone: () =>
 
 function BookingItem({ booking }: { booking: AdminBooking }) {
   const router = useRouter();
+  // 签名地址转同源代理：手机不直连 supabase.co，否则图永远加载不出来
+  const imageSrc = toMediaUrl(booking.signedImageUrl);
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -224,13 +227,14 @@ function BookingItem({ booking }: { booking: AdminBooking }) {
 
   return (
     <li className="admin-item admin-item--booking">
-      {booking.signedImageUrl ? (
+      {imageSrc ? (
         <div className="admin-item__thumb">
           {/* 签名 URL 是临时的且域名动态，用原生 img 加载 */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {/* 单击放大：适应窗口 → 再点图片看原图细节 */}
-          <ImageZoom src={booking.signedImageUrl} alt="顾客样图">
-            <img src={booking.signedImageUrl} alt="顾客样图" />
+          <ImageZoom src={imageSrc} alt="顾客样图">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imageSrc} alt="顾客样图" loading="lazy" decoding="async" />
           </ImageZoom>
         </div>
       ) : (

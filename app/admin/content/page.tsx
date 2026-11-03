@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import AdminBar from '@/components/admin/AdminBar';
 import ContentForm from '@/components/admin/ContentForm';
 import ServicesEditor from '@/components/admin/ServicesEditor';
+import { getTodayOpenCount } from '@/lib/bookings';
 import { getSiteContent, KEY_MAP } from '@/lib/content';
 import { getServices } from '@/lib/services';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
@@ -25,6 +26,7 @@ export default async function AdminContentPage() {
     redirect(guard.reason === 'anonymous' ? '/admin/login' : '/admin');
   }
 
+  const todayCount = getTodayOpenCount();
   const [{ content, source: contentSource }, servicesResult] = await Promise.all([
     getSiteContent(),
     getServices(),
@@ -38,7 +40,7 @@ export default async function AdminContentPage() {
 
   return (
     <main className="admin-wrap">
-      <AdminBar active="content" email={guard.email} />
+      <AdminBar active="content" email={guard.email} todayCount={todayCount} />
 
       {contentSource === 'static' ? (
         <div className="admin-note admin-note--warn">
